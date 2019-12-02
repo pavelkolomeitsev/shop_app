@@ -5,12 +5,14 @@ import 'package:provider/provider.dart';
 import '../pages/product_detail_page.dart';
 import '../providers/product.dart';
 import '../providers/cart.dart';
+import '../providers/auth.dart';
 
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final oneProduct = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -33,7 +35,8 @@ class ProductItem extends StatelessWidget {
                   ? Icons.favorite
                   : Icons.favorite_border),
               onPressed: () {
-                oneProduct.toggleFavoriteStatus();
+                oneProduct.toggleFavoriteStatus(
+                    authData.token, authData.userId);
               },
               color: Theme.of(context).accentColor,
             ),
@@ -45,7 +48,6 @@ class ProductItem extends StatelessWidget {
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-
               cart.addItem(oneProduct.id, oneProduct.price, oneProduct.title);
 
               Scaffold.of(context).hideCurrentSnackBar();
