@@ -12,6 +12,7 @@ import './pages/orders_page.dart';
 import './pages/user_products_page.dart';
 import './pages/edit_product_page.dart';
 import './pages/auth_page.dart';
+import './pages/splash_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -33,8 +34,8 @@ class MyApp extends StatelessWidget {
           value: Cart(),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
-          builder: (context, auth, previousOrders) => Orders(
-              auth.token, previousOrders == null ? [] : previousOrders.orders),
+          builder: (context, auth, previousOrders) => Orders(auth.token,
+              auth.userId, previousOrders == null ? [] : previousOrders.orders),
         ),
       ],
       child: Consumer<Auth>(
@@ -45,13 +46,27 @@ class MyApp extends StatelessWidget {
             accentColor: Colors.deepOrange,
             fontFamily: 'Lato',
           ),
-          home: auth.isAuth ? ProductsOverviewPage() : AuthPage(),
+          home: auth.isAuth
+              ? ProductsOverviewPage()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (context, authResultSnapshot) =>
+                      authResultSnapshot.connectionState ==
+                              ConnectionState.waiting
+                          ? SplashScreen()
+                          : AuthPage(),
+                ),
           routes: {
-            ProductDetailPage.routeName: (context) => ProductDetailPage(),
-            CartPage.routeName: (context) => CartPage(),
-            OrdersPage.routeName: (context) => OrdersPage(),
-            UserProductsPage.routeName: (context) => UserProductsPage(),
-            EditProductPage.routeName: (context) => EditProductPage(),
+            ProductDetailPage.routeName: (context) =>
+                auth.isAuth ? ProductDetailPage() : AuthPage(),
+            CartPage.routeName: (context) =>
+                auth.isAuth ? CartPage() : AuthPage(),
+            OrdersPage.routeName: (context) =>
+                auth.isAuth ? OrdersPage() : AuthPage(),
+            UserProductsPage.routeName: (context) =>
+                auth.isAuth ? UserProductsPage() : AuthPage(),
+            EditProductPage.routeName: (context) =>
+                auth.isAuth ? EditProductPage() : AuthPage(),
           },
         ),
       ),
