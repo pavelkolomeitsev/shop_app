@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../pages/orders_page.dart';
 import '../pages/user_products_page.dart';
+import '../providers/auth.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -10,13 +12,13 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('Hello Friend!'),
+            title: const Text('Hello Friend!'),
             automaticallyImplyLeading: false,
           ),
           const Divider(),
           ListTile(
             leading: Icon(Icons.shop),
-            title: Text('Shop'),
+            title: const Text('Shop'),
             onTap: (){
               Navigator.of(context).pushReplacementNamed('/');
             },
@@ -24,7 +26,7 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: Icon(Icons.payment),
-            title: Text('Orders'),
+            title: const Text('Orders'),
             onTap: (){
               Navigator.of(context).pushReplacementNamed(OrdersPage.routeName);
             },
@@ -32,9 +34,21 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: Icon(Icons.edit),
-            title: Text('Manage Products'),
+            title: const Text('Manage Products'),
             onTap: (){
               Navigator.of(context).pushReplacementNamed(UserProductsPage.routeName);
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
+            title: const Text('Logout'),
+            onTap: (){
+              Navigator.of(context).pop();
+
+              Navigator.of(context).pushReplacementNamed('/');
+
+              Provider.of<Auth>(context, listen: false).logout();
             },
           ),
         ],
